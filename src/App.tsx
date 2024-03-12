@@ -42,8 +42,8 @@ function App() {
   }
 
   return (
-    <div className="flex items-center flex-col gap-8 w-screen p-8">
-      <h1>Boleiros</h1>
+    <div className="container flex items-center flex-col gap-8 w-screen p-4">
+      <h1 className="text-4xl">Boleiros</h1>
       {!teams.length && (
         <Textarea
           className="bg-zinc-950"
@@ -54,7 +54,7 @@ function App() {
           cols={30}
         />
       )}
-      <div className="flex gap-8 mb-4">
+      <div className="flex gap-8">
         <Button onClick={generateTeams}>Sortear</Button>
         {Boolean(teams.length) && (
           <Button onClick={reset} variant="destructive">
@@ -63,9 +63,9 @@ function App() {
         )}
       </div>
 
-      <div className="grid grid-cols-2 gap-10">
+      <div className="grid grid-cols-2 gap-4 w-full">
         {teams.map((team, index) => (
-          <div key={index}>
+          <div key={index} className="bg-gray-900 p-4">
             <h3 className="mb-6">Time {index + 1}</h3>
             <ul>
               {team.map((player, i) => (
