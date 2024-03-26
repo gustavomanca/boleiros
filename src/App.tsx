@@ -28,14 +28,16 @@ function App() {
     setPlayersText(event.target.value)
   }
 
-  const generateTeams = () => {
-    const players = playersText
-      .split('\n')
-      .map((player) => player.trim())
-      .filter(Boolean)
-    const filtered = clearEmptyPlayers(players)
+  const sanitizeHeaders = () => {
+    const updated = playersText.split('1-')
+    updated.shift()
+    return updated.join('\n')
+  }
 
-    const shuffledPlayers = shuffleArray(filtered)
+  const generateTeams = () => {
+    const sanitized = sanitizeHeaders()
+    const players = clearEmptyPlayers(sanitized.split('\n'))
+    const shuffledPlayers = shuffleArray(players)
     const numTeams = Math.ceil(shuffledPlayers.length / 5)
     const teamsArray = []
 
