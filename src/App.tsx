@@ -15,6 +15,15 @@ function App() {
   const [playersText, setPlayersText] = useState('')
   const [teams, setTeams] = useState<string[][]>([])
 
+  const clearEmptyPlayers = (players: Array<string>) => {
+    return players
+      .map((player) => {
+        const cleared = player.replace(/\d+/g, '').replace('-', '').trim()
+        return cleared
+      })
+      .filter((value) => value !== '')
+  }
+
   const handleInputChange = (event: ChangeEvent<HTMLTextAreaElement>) => {
     setPlayersText(event.target.value)
   }
@@ -24,7 +33,9 @@ function App() {
       .split('\n')
       .map((player) => player.trim())
       .filter(Boolean)
-    const shuffledPlayers = shuffleArray(players)
+    const filtered = clearEmptyPlayers(players)
+
+    const shuffledPlayers = shuffleArray(filtered)
     const numTeams = Math.ceil(shuffledPlayers.length / 5)
     const teamsArray = []
 
