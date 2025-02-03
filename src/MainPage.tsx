@@ -2,24 +2,24 @@ import { ChangeEvent, useState } from 'react'
 import { Button } from './components/ui/button'
 import { Textarea } from './components/ui/textarea'
 import { useToast } from './components/ui/use-toast'
-
-function shuffleArray(array: string[]) {
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1))
-    ;[array[i], array[j]] = [array[j], array[i]]
-  }
-  return array
-}
+import { shuffleArray } from './utils/shuffle'
+import { Label } from './components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue
+} from './components/ui/select'
 
 function MainPage() {
   const { toast } = useToast()
 
+  const [playersPerTeam, setPlayersPerTeam] = useState(5)
   const [playersText, setPlayersText] = useState('')
   const [teams, setTeams] = useState<string[][]>([])
 
   const copy = () => {
-    console.log({ teams })
-
     const text = teams.reduce((acc, value, index) => {
       const teamLabel = `${index === 0 ? '' : '\n\n'}*Time ${String(
         index + 1
@@ -48,6 +48,10 @@ function MainPage() {
     setPlayersText(event.target.value)
   }
 
+  const handlePlayersPerTeamChange = (value: string) => {
+    setPlayersPerTeam(Number.parseInt(value, 10))
+  }
+
   const sanitizeHeaders = () => {
     const updated = playersText.split('1-')
     updated.shift()
@@ -58,11 +62,14 @@ function MainPage() {
     const sanitized = sanitizeHeaders()
     const players = clearEmptyPlayers(sanitized.split('\n'))
     const shuffledPlayers = shuffleArray(players)
-    const numTeams = Math.ceil(shuffledPlayers.length / 5)
+    const numTeams = Math.ceil(shuffledPlayers.length / playersPerTeam)
     const teamsArray = []
 
     for (let i = 0; i < numTeams; i++) {
-      const team = shuffledPlayers.slice(i * 5, (i + 1) * 5)
+      const team = shuffledPlayers.slice(
+        i * playersPerTeam,
+        (i + 1) * playersPerTeam
+      )
       teamsArray.push(team)
     }
 
@@ -77,6 +84,21 @@ function MainPage() {
   return (
     <div className="container flex items-center flex-col gap-8 w-screen p-4">
       <h1 className="text-4xl">Boleiros</h1>
+
+      <div className="flex items-center gap-4">
+        <Label htmlFor="playersPerTeam">Jogadores por Time:</Label>
+        <Select onValueChange={handlePlayersPerTeamChange} defaultValue="5">
+          <SelectTrigger className="w-[180px] bg-transparent border-zinc-800">
+            <SelectValue placeholder="Selecione o número de jogadores" />
+          </SelectTrigger>
+          <SelectContent className="bg-black/50 backdrop-blur-sm border-zinc-800">
+            <SelectItem value="4">4 jogadores</SelectItem>
+            <SelectItem value="5">5 jogadores</SelectItem>
+            <SelectItem value="6">6 jogadores</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       {!teams.length && (
         <Textarea
           className="bg-zinc-950"
